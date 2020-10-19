@@ -1,0 +1,42 @@
+# Report Test Project
+/*/migrations/*
+!*/migrations/__init__.py
+
+report_test_project_ui/node_modules
+
+# Django
+*.pyc
+*.cpython-36.pyc
+__pycache__
+logs/
+static/
+media/*
+
+!media/admin_avatar/avatar.svg
+!media/audio/new_msg.mp3
+
+# PyCharm
+/.idea/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Environments
+venv/
+
+# mkdocs documentation
+/site
+
+# Unix socket
+*.sock.lock
+/node_modules/
+static_dev/

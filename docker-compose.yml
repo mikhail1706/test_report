@@ -1,0 +1,87 @@
+version: '3'
+
+volumes:
+  db_data: {}
+  celery_logs: {}
+
+networks:
+  main:
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - 8000:8000
+    restart: always
+    networks:
+      - main
+  web_ui:
+    build:
+      context: .
+      dockerfile: docker/dev/vue/Dockerfile
+    command: npm run serve
+    volumes:
+      - ./report_test_project_ui:/app
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - web
+      - db
+      - redis
+      - rabbitmq
+    networks:
+      - main
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: report_test_project
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+    networks:
+      - main
+  rabbitmq:
+    image: rabbitmq
+    networks:
+      - main
+  redis:
+    image: redis:alpine
+    networks:
+      - main
+
+  celery_worker:
+    build: .
+    command: sh local-celerybeat.sh
+    depends_on:
+      - web
+      - db
+      - redis
+      - rabbitmq
+    networks:
+      - main
+    volumes:
+      - .:/code
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    env_file:
+      - .env
+    ports:
+      - 8070:80
+    depends_on:
+      - db
+    networks:
+      - main
+    links:
+      - db:db
