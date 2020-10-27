@@ -8,7 +8,7 @@ report_test_project_ui/node_modules
 *.pyc
 *.cpython-36.pyc
 __pycache__
-logs/
+logs/*.log
 static/
 media/*
 
